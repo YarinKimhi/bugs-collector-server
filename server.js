@@ -11,12 +11,13 @@ connectDB()
 
 const app = express()
 app.use(bodyparser.json())
-if(process.env.NODE_ENV === 'development'){
+app.use(cors())
+/*if(process.env.NODE_ENV === 'development'){
     app.use(cors({
         origin:process.env.URL
     }))
     app.use(morgan('dev'))
-}
+}*/
 const authRouter = require('./routes/auth.route')
 
 app.use('/api/',authRouter)
