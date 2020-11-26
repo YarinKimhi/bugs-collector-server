@@ -8,13 +8,14 @@ const {
     resetPasswordValidator
 } = require('../helpers/valid')
 
-
 const {
     registerController,
-    activationCotroller
+    activationCotroller,
+    loginController
 } = require('../controllers/auth.controller.js')
 
 router.post('/register',validRegister, registerController)
+router.post('/login',validLogin, loginController)
 router.post('/activation', activationCotroller)
 
 module.exports = router
