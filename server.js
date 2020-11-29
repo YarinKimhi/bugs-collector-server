@@ -19,8 +19,11 @@ app.use(cors())
     app.use(morgan('dev'))
 }*/
 const authRouter = require('./routes/auth.route')
-
 app.use('/api/',authRouter)
+
+const bugRouter = require('./routes/dash.route')
+
+app.use('/api/dash/',bugRouter)
 
 
 app.use((req,res,next)=>{
