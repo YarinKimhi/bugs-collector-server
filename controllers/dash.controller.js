@@ -55,3 +55,27 @@ exports.createBugController = (req,res)=> {
         )
     }
 }
+
+
+exports.getBugController = (req,res) =>{
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+        Bug.find().exec((err,bugs)=>{
+            if(err){
+                console.log(err)
+                return res.status(401).json({
+                    error:'User not exist'
+                })
+            }else{
+                return res.status(200).json({
+                    bugs
+                })
+            }
+        })
+    }
+}

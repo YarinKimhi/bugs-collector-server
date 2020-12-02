@@ -2,10 +2,12 @@ const express = require('express')
 const router = express.Router()
 
 const {
-    createBugController
+    createBugController,
+    getBugController
 } =require('../controllers/dash.controller.js')
 
 
 router.post('/bugreport',createBugController);
+router.get('/',getBugController)
 
 module.exports = router
