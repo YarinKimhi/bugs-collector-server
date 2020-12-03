@@ -15,9 +15,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 exports.createBugController = (req,res)=> {
     //console.log(req.body)
-    const {token,headline,description,team,severity} =req.body
+    const {token,headline,description,team,severity,status} =req.body
     const errors = validationResult(req)
-    
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
         return res.status(422).json({
@@ -37,10 +36,12 @@ exports.createBugController = (req,res)=> {
                         headline,
                         description,
                         team,
-                        severity
+                        severity,
+                        status
                     })
                     bug.save((err,bug)=> {
                         if(err){
+                            console.log(err)
                             return res.status(422).json({
                                 error:errorHandler(err)
                             })

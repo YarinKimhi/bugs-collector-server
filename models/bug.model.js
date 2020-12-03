@@ -25,6 +25,11 @@ const bugSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true 
+    },
+    status:{
+        type: String,
+        trim: true,
+        required: true 
     }
 },{timeStamp: true}) 
 
