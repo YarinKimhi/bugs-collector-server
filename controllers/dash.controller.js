@@ -70,7 +70,7 @@ exports.getBugController = (req,res) =>{
             if(err){
                 console.log(err)
                 return res.status(401).json({
-                    error:'User not exist'
+                    error:'No exist bugs'
                 })
             }else{
                 return res.status(200).json({
@@ -79,4 +79,30 @@ exports.getBugController = (req,res) =>{
             }
         })
     }
+}
+exports.getBugByIdController =async  (req,res) =>{
+    const {id} = req.body
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+        await Bug.findById(id).exec((err,bug)=>{
+            if(err){
+                return res.status(401).json({
+                    error:"No relevant bug"
+                })
+            }else{
+                return res.status(201).json({
+                    message:"Found relevant bug",
+                    bug
+                })
+            }
+        })
+
+    }
+
 }
