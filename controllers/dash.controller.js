@@ -1,9 +1,7 @@
 const User = require('../models/auth.model')
 const Bug =require('../models/bug.model')
-const exppressJwt = require('express-jwt')
+const Comment =  require('../models/comment.model')
 const _ = require('lodash')
-const {OAuth2Client} = require('google-auth-library')
-const fetch = require('node-fetch')
 const {validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
 const {errorHandler} = require ('../helpers/dbErrorHandling')
@@ -13,7 +11,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 
 
-exports.createBugController = (req,res)=> {
+exports.createBugController = (req,res)=> {   
     //console.log(req.body)
     const {token,headline,description,team,severity,status} =req.body
     const errors = validationResult(req)
@@ -58,7 +56,7 @@ exports.createBugController = (req,res)=> {
 }
 
 
-exports.getBugController = (req,res) =>{
+exports.getBugsController = (req,res) =>{ 
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
@@ -80,7 +78,7 @@ exports.getBugController = (req,res) =>{
         })
     }
 }
-exports.getBugByIdController =async  (req,res) =>{
+exports.getBugByIdController =async  (req,res) =>{   
     const {id} = req.body
     const errors = validationResult(req)
 
@@ -104,5 +102,80 @@ exports.getBugByIdController =async  (req,res) =>{
         })
 
     }
+
+}
+
+exports.createNewComController = (req,res) =>{
+    const {user_id,bug_id,commentInfo} = req.body
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{ 
+        User.findById(user_id).exec((err,user)=>{
+            if(err){
+                return res.status(401).json({
+                    error:"No relevant user"
+                })
+            }else{
+                Bug.findById(bug_id).exec((err,bug)=>{
+                    if(err){
+                        return res.status(401).json({
+                            error:"No relevant Bug"
+                        })
+                    }else{ 
+                            const comment =  new Comment({
+                                user_id,
+                                bug_id,
+                                comment:commentInfo,
+                                time: Date.now()
+                            })
+                            // console.log(comment)
+                            comment.save((err,comment)=>{
+                                if(err){
+                                    return res.status(422).json({
+                                        error:errorHandler(err)
+                                    })
+                                }else{
+                                    return res.status(200).json({
+                                        message:'Comment added',
+                                        comment
+                                    })
+                                }         
+                            })
+                    }
+                })   
+            }    
+        })
+    }
+
+}
+
+exports.getCommentsController = (req,res) =>{
+    const {bug_id} = req.body
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+        Comment.find({bug_id: bug_id}).exec((err,comments)=>{
+            if(err){
+                console.log(err)
+                return res.status(401).json({
+                    error:'No exist Comments'
+                })
+            }else{
+                return res.status(200).json({
+                    comments
+                })
+            }
+        })
+    }
+
 
 }
