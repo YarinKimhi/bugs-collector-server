@@ -39,7 +39,6 @@ exports.createBugController = (req,res)=> {
                     })
                     bug.save((err,bug)=> {
                         if(err){
-                            console.log(err)
                             return res.status(422).json({
                                 error:errorHandler(err)
                             })
@@ -155,7 +154,7 @@ exports.createNewComController = (req,res) =>{
 }
 
 exports.getCommentsController = (req,res) =>{
-    const {bug_id} = req.body
+    const {id} = req.body
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
@@ -163,16 +162,17 @@ exports.getCommentsController = (req,res) =>{
             error:firstError
         })
     }else{
-        Comment.find({bug_id: bug_id}).exec((err,comments)=>{
-            if(err){
-                console.log(err)
-                return res.status(401).json({
-                    error:'No exist Comments'
-                })
-            }else{
-                return res.status(200).json({
-                    comments
-                })
+        Comment.find({bug_id:id})
+            .exec((err,comments)=>{
+                if(err){
+                    console.log(err)
+                    return res.status(401).json({
+                        error:'No exist Comments'
+                    })
+                }else{
+                    return res.status(200).json({
+                        comments
+                    })
             }
         })
     }
