@@ -6,6 +6,11 @@ const commentSchema = mongoose.Schema({
         trim: true,
         required: true
     },
+    user_name:{
+        type: String,
+        trim: true,
+        required: true
+    },
     bug_id:{
         type: String,
         trim: true,
@@ -17,7 +22,7 @@ const commentSchema = mongoose.Schema({
         required: true
     },
     time:{
-        type: Date,
+        type: String,
         trim: true,
         required: true
     }

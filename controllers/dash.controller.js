@@ -126,13 +126,16 @@ exports.createNewComController = (req,res) =>{
                             error:"No relevant Bug"
                         })
                     }else{ 
+                        const timeElapsed = Date.now();
+                        const today = new Date(timeElapsed);
+                        
                             const comment =  new Comment({
                                 user_id,
                                 bug_id,
                                 comment:commentInfo,
-                                time: Date.now()
+                                user_name: user.name,
+                                time: today.toLocaleString()
                             })
-                            // console.log(comment)
                             comment.save((err,comment)=>{
                                 if(err){
                                     return res.status(422).json({
@@ -167,7 +170,7 @@ exports.getCommentsController = (req,res) =>{
                 if(err){
                     console.log(err)
                     return res.status(401).json({
-                        error:'No exist Comments'
+                        error:'No comments exists '
                     })
                 }else{
                     return res.status(200).json({
