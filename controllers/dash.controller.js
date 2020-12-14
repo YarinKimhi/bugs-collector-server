@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken')
 const {errorHandler} = require ('../helpers/dbErrorHandling')
 
 
+
+
 exports.createBugController = (req,res)=> {   
     //console.log(req.body)
     const {token,headline,description,team,severity,status} =req.body
@@ -176,4 +178,48 @@ exports.getCommentsController = (req,res) =>{
         })
     }
 
+}
+
+exports.updateBugController =  (req,res)=> {   
+    const {token,currentBug} =req.body
+    const {_id,headline,description,team,severity,status} = currentBug
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+        jwt.verify(token , process.env.JWT_SECRET, 
+            (err)=>{
+                if(err){
+                    return res.status(401).json({
+                        error:'Expired Token, signup again'
+                    })
+                }else{
+                    const {name} = jwt.decode(token)
+                    Bug.findByIdAndUpdate(_id, {
+                            nameCreator:name,
+                            headline,
+                            description,
+                            team,
+                            severity,
+                            status
+                        }, ((err,result)=> {
+                            if(err){ 
+                                return res.status(422).json({
+                                    error:errorHandler(err)
+                                })
+                            }else{
+                                return res.status(200).json({
+                                    message:'success',
+                                    result
+                                })
+                            }
+                            })
+                        )
+                }   
+            }
+        )
+    }
 }
