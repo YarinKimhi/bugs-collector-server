@@ -5,10 +5,6 @@ const _ = require('lodash')
 const {validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
 const {errorHandler} = require ('../helpers/dbErrorHandling')
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
-
 
 
 exports.createBugController = (req,res)=> {   
@@ -179,6 +175,5 @@ exports.getCommentsController = (req,res) =>{
             }
         })
     }
-
 
 }

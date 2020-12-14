@@ -16,4 +16,3 @@ router.post('/login',validLogin, loginController)
 
 module.exports = router
 
-//router.post('/activation', activationCotroller)
