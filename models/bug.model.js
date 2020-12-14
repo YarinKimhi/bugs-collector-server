@@ -30,6 +30,11 @@ const bugSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true 
+    },
+    assign:{
+        type: String,
+        trim: true,
+        required: true 
     }
 },{timeStamp: true}) 
 

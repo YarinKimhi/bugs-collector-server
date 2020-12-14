@@ -11,7 +11,7 @@ const {errorHandler} = require ('../helpers/dbErrorHandling')
 
 exports.createBugController = (req,res)=> {   
     //console.log(req.body)
-    const {token,headline,description,team,severity,status} =req.body
+    const {token,headline,description,team,severity,status,assign} =req.body
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
@@ -33,7 +33,8 @@ exports.createBugController = (req,res)=> {
                         description,
                         team,
                         severity,
-                        status
+                        status,
+                        assign
                     })
                     bug.save((err,bug)=> {
                         if(err){
@@ -65,7 +66,7 @@ exports.getBugsController = (req,res) =>{
             if(err){
                 console.log(err)
                 return res.status(401).json({
-                    error:'No exist bugs'
+                    error:'No bugs exist'
                 })
             }else{
                 return res.status(200).json({
@@ -168,7 +169,7 @@ exports.getCommentsController = (req,res) =>{
                 if(err){
                     console.log(err)
                     return res.status(401).json({
-                        error:'No comments exists '
+                        error:'No comments exists'
                     })
                 }else{
                     return res.status(200).json({
@@ -182,7 +183,7 @@ exports.getCommentsController = (req,res) =>{
 
 exports.updateBugController =  (req,res)=> {   
     const {token,currentBug} =req.body
-    const {_id,headline,description,team,severity,status} = currentBug
+    const {_id,headline,description,team,severity,status,assign} = currentBug
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
@@ -204,7 +205,8 @@ exports.updateBugController =  (req,res)=> {
                             description,
                             team,
                             severity,
-                            status
+                            status,
+                            assign
                         }, ((err,result)=> {
                             if(err){ 
                                 return res.status(422).json({
@@ -221,5 +223,29 @@ exports.updateBugController =  (req,res)=> {
                 }   
             }
         )
+    }
+}
+
+
+exports.getUsersController = (req,res) =>{ 
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+        User.find().exec((err,users)=>{
+            if(err){
+                console.log(err)
+                return res.status(401).json({
+                    error:'No users exists'
+                })
+            }else{
+                return res.status(200).json({
+                    users
+                })
+            }
+        })
     }
 }

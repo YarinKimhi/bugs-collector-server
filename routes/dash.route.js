@@ -4,6 +4,7 @@ const router = express.Router()
 const {
     createBugController,
     getBugsController,
+    getUsersController,
     getBugByIdController,
     createNewComController,
     getCommentsController,
@@ -13,6 +14,7 @@ const {
 
 router.post('/bugreport',createBugController);
 router.get('/',getBugsController)
+router.get('/users',getUsersController)
 router.post('/bug',getBugByIdController)
 router.post('/bug/comment',createNewComController )
 router.post('/bug/comments',getCommentsController )
