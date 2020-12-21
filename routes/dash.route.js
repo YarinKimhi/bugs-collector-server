@@ -8,7 +8,8 @@ const {
     getBugByIdController,
     createNewComController,
     getCommentsController,
-    updateBugController
+    updateBugController,
+    getBugsDataController
 } =require('../controllers/dash.controller.js')
 
 
@@ -19,5 +20,6 @@ router.post('/bug',getBugByIdController)
 router.post('/bug/comment',createNewComController )
 router.post('/bug/comments',getCommentsController )
 router.post('/bug/update',updateBugController)
+router.post('/bugs/getdata',getBugsDataController)
 
 module.exports = router

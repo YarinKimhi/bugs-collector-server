@@ -27,6 +27,8 @@ exports.createBugController = (req,res)=> {
                     })
                 }else{
                     const {name} = jwt.decode(token)
+                    const timeElapsed = Date.now();
+                    const today = new Date(timeElapsed);
                     const bug = new Bug({
                         nameCreator:name,
                         headline,
@@ -34,7 +36,8 @@ exports.createBugController = (req,res)=> {
                         team,
                         severity,
                         status,
-                        assign
+                        assign,
+                        time:today.toLocaleDateString()
                     })
                     bug.save((err,bug)=> {
                         if(err){
@@ -247,5 +250,49 @@ exports.getUsersController = (req,res) =>{
                 })
             }
         })
+    }
+}
+
+
+exports.getBugsDataController = async (req,res) =>{ 
+    const {dates} = req.body
+    const {start,finish} = dates
+    console.log(start, finish)
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        const firstError = errors.array().map(error=> error.msg)[0]
+        return res.status(422).json({
+            error:firstError
+        })
+    }else{
+         await Bug.aggregate(
+            [
+                { "$match": {
+                    "time": { 
+                        "$gte": new Date(start), "$lt": new Date(finish)
+                    }
+                }},
+                { "$group": {
+                    "_id": { 
+                        "year":  { "$year": "$time" },
+                        "month": { "$month": "$time" },
+                        "day":   { "$dayOfMonth": "$time" }
+                    },
+                    "count": { "$sum": 1 }
+                }}
+            ],
+            ((err,result) => {
+                if(err){
+                    console.log(err)
+                    return res.status(401).json({
+                        error:'No relevant data'
+                    })
+                }else{
+                    return res.status(200).json({
+                        result
+                    })
+                }
+            })
+        );
     }
 }

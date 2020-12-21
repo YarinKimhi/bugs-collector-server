@@ -35,6 +35,10 @@ const bugSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true 
+    },
+    time:{
+        type: Date,
+        default: new Date(),
     }
 },{timeStamp: true}) 
 
