@@ -10,7 +10,6 @@ const {errorHandler} = require ('../helpers/dbErrorHandling')
 
 
 exports.createBugController = (req,res)=> {   
-    //console.log(req.body)
     const {token,headline,description,team,severity,status,assign} =req.body
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -79,7 +78,7 @@ exports.getBugsController = (req,res) =>{
         })
     }
 }
-exports.getBugByIdController =async  (req,res) =>{   
+exports.getBugByIdController =async (req,res) =>{   
     const {id} = req.body
     const errors = validationResult(req)
 
@@ -254,10 +253,8 @@ exports.getUsersController = (req,res) =>{
 }
 
 
-exports.getBugsDataController = async (req,res) =>{ 
-    const {dates} = req.body
-    const {start,finish} = dates
-    console.log(start, finish)
+exports.getBugsStatsController = async (req,res) =>{ 
+    const {start,finish} = req.body
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
