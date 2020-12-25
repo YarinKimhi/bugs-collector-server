@@ -21,6 +21,7 @@ app.use(cors())
 const authRouter = require('./routes/auth.route')
 app.use('/api/',authRouter)
 
+
 const bugRouter = require('./routes/dash.route')
 
 app.use('/api/dash/',bugRouter)
