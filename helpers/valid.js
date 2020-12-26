@@ -38,6 +38,5 @@ exports.validUserUpdate = [
     .isLength({
         min:3,
         max:32
-    }).withMessage('name must be with 3 to 32 characters'),
-    check('email').isEmail().withMessage('Must be a valid email address')
+    }).withMessage('name must be with 3 to 32 characters')
 ]

@@ -101,8 +101,7 @@ exports.loginController = (req,res)=>{
 
 
 exports.updateUserController = (req,res) => {
-    const {id,name,email,password,confirmpassword} = req.body
-    //console.log(name,email,password,confirmpassword)
+    const {id,name,password,confirmpassword} = req.body
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         const firstError = errors.array().map(error=> error.msg)[0]
@@ -115,66 +114,49 @@ exports.updateUserController = (req,res) => {
                 return res.status(401).json({
                     error:"No User please try login again"
                 })
-            }else{  // user exists , check first if the mail changed
-                if(email === user.email){ // didn't change email
-                    let valid = password.match(/\d+/g);
-                    let stringPass = String(password)
-                    if(password === confirmpassword && password !==''  ){ // if password empty will update name only
-                        if(stringPass.length >=6 && valid!==null){ // password not empty - check if password is valid structue
-                            user.name = name
-                            user.password = password
-                        }else{
-                            return res.status(422).json({
-                                error:'password must contain 6 characters and one number at least'
-                            })
-                        }
-                    }else{ 
+            }else{ 
+                let valid = password.match(/\d+/g);
+                let stringPass = String(password)
+                if(password === confirmpassword && password !==''  ){ // if password empty will update name only
+                    if(stringPass.length >=6 && valid!==null){ // password not empty - check if password is valid structue
                         user.name = name
+                        user.password = password
+                    }else{
+                        return res.status(422).json({
+                            error:'password must contain 6 characters and one number at least'
+                        })
                     }
-                }else{ // need to check if new mail is taken
-                    User.findOne({
-                        email
-                    }).exec((err,foundUser)=>{
-                        if(err){
-                            return res.status(400).json({
-                                error: "Something went wrong try again"
-                            })
-                        }
-                        if(foundUser){
-                            return res.status(400).json({
-                                error: "Email is taken"
-                            })
-                        }else{
-                            let valid = password.match(/\d+/g);
-                            let stringPass = String(password)
-                            if(password === confirmpassword && password !==''  ){ // if password empty will update name only
-                                if(stringPass.length >=6 && valid!==null){ // password not empty - check if password is valid structue
-                                    user.name = name
-                                    user.password = password
-                                }else{
-                                    return res.status(422).json({
-                                        error:'password must contain 6 characters and one number at least'
-                                    })
-                                }
-                            }else{ 
-                                user.name = name
-                            }
-                        }
-                    })
+                }else{ 
+                    user.name = name
                 }
-                    user.save((err)=>{
-                        if(err){
-                            return res.status(401).json({
-                                error:errorHandler(err)
-                            })
-                        }else{
-                            return res.json({
-                                success: true,
-                                message: 'update successfuly',
-                            })
-                        }
-                    })
-                
+                user.save((err)=>{
+                    if(err){
+                        return res.status(401).json({
+                            error:errorHandler(err)
+                        })
+                    }else{
+                        const token = jwt.sign(
+                            {
+                                _id:user._id,
+                                name:user.name,
+                            },process.env.JWT_SECRET,
+                            {
+                                expiresIn:'7d'
+                            }
+                        )
+                        const {_id,name,email,role} = user
+                        return res.json({
+                            message: 'update successfuly',
+                            token,
+                            user:{
+                                _id,
+                                name,
+                                email,
+                                role
+                            }
+                        })
+                    }
+                })
             }
         })
     }
